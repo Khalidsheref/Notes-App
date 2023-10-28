@@ -7,29 +7,69 @@ class NewBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 32),
-            CustomTextField(
-              hint: 'title',
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            CustomTextField(
-              hint: 'Content',
-              maxlines: 5,
-            ),
-            SizedBox(height: 80),
-            CustomButton(),
-            SizedBox(
-              height: 15,
-            )
-          ],
-        ),
+        child: AddNoteForm(),
+      ),
+    );
+  }
+}
+
+class AddNoteForm extends StatefulWidget {
+  const AddNoteForm({
+    super.key,
+  });
+
+  @override
+  State<AddNoteForm> createState() => _AddNoteFormState();
+}
+
+final GlobalKey<FormState> formkey = GlobalKey();
+AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
+
+String? title, subtitle;
+
+class _AddNoteFormState extends State<AddNoteForm> {
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: formkey,
+      autovalidateMode: autovalidateMode,
+      child: Column(
+        children: [
+          SizedBox(height: 32),
+          CustomTextField(
+            onsaved: (value) {
+              title = value;
+            },
+            hint: 'title',
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          CustomTextField(
+            onsaved: (value) {
+              subtitle = value;
+            },
+            hint: 'Content',
+            maxlines: 5,
+          ),
+          SizedBox(height: 80),
+          CustomButton(
+            onTap: () {
+              if (formkey.currentState!.validate()) {
+                formkey.currentState!.save();
+              } else {
+                autovalidateMode = AutovalidateMode.always;
+                setState(() {});
+              }
+            },
+          ),
+          SizedBox(
+            height: 15,
+          )
+        ],
       ),
     );
   }
